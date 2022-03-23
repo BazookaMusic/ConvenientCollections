@@ -1,4 +1,4 @@
 .vs
-/bin
-/obj
-/TestResults
+bin/
+obj/
+TestResults/
