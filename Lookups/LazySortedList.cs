@@ -17,6 +17,8 @@ namespace ConvenientCollections
 
         private bool isSorted;
 
+        private readonly KeyValueComparer comparer;
+
         /// <summary>
         /// Creates an instance of the <see cref="LazySortedList{TKey, TValue}"/> object.
         /// </summary>
@@ -32,6 +34,27 @@ namespace ConvenientCollections
         public LazySortedList(IEnumerable<KeyValuePair<TKey, TValue>> keyValues)
         {
             this._list = new List<KeyValuePair<TKey, TValue>>(keyValues);
+        }
+
+        /// <summary>
+        /// Creates an instance of the <see cref="LazySortedList{TKey, TValue}"/> object.
+        /// </summary>
+        /// <param name="comparer">The comparer to use.</param>
+        public LazySortedList(int capacity = 4, IComparer<TKey> comparer)
+        {
+            this._list = new List<KeyValuePair<TKey, TValue>>(capacity);
+            this.comparer = comparer != null ? new KeyValueComparer(comparer) : KeyValueComparer.Instance;
+        }
+
+        /// <summary>
+        /// Creates an instance of the <see cref="LazySortedList{TKey, TValue}"/> object.
+        /// </summary>
+        /// <param name="keyValues">The key-value pairs to insert.</param>
+        /// <param name="comparer">The comparer to use.</param>
+        public LazySortedList(IEnumerable<KeyValuePair<TKey, TValue>> keyValues, IComparer<TKey> comparer)
+        {
+            this._list = new List<KeyValuePair<TKey, TValue>>(keyValues);
+            this.comparer = comparer != null ? new KeyValueComparer(comparer) : KeyValueComparer.Instance;
         }
 
         /// <inheritdoc/>
@@ -65,6 +88,7 @@ namespace ConvenientCollections
         {
             get
             {
+                this.EnsureSorted();
                 List<TKey> keys = new List<TKey>(this.Count);
                 for (int i = 0; i < this.Count; i++)
                 {
@@ -80,6 +104,7 @@ namespace ConvenientCollections
         {
             get
             {
+                this.EnsureSorted();
                 List<TValue> values = new List<TValue>(this.Count);
                 for (int i = 0; i < this.Count; i++)
                 {
@@ -99,7 +124,7 @@ namespace ConvenientCollections
         /// <inheritdoc/>
         public void Add(TKey key, TValue value)
         {
-            this._list.Add(new KeyValuePair<TKey, TValue>(key, value));
+            this.Add(new KeyValuePair<TKey, TValue>(key, value));
         }
 
         /// <inheritdoc/>
@@ -108,13 +133,14 @@ namespace ConvenientCollections
             this._list.Add(item);
             this.isSorted = this.Count == 1 || 
                 // optimize sorted insert
-                KeyComparer.Instance.Compare(this._list[this.Count - 2], item) >= 0;
+                KeyValueComparer.Instance.Compare(this._list[this.Count - 2], item) >= 0;
         }
 
         /// <inheritdoc/>
         public void Clear()
         {
             this._list.Clear();
+            this.isSorted = true;
         }
 
         /// <inheritdoc/>
@@ -122,7 +148,7 @@ namespace ConvenientCollections
         {
             this.EnsureSorted();
 
-            int index = this._list.BinarySearch(item, KeyComparer.Instance);
+            int index = this._list.BinarySearch(item, KeyValueComparer.Instance);
             if (index < 0)
             {
                 return false;
@@ -203,14 +229,17 @@ namespace ConvenientCollections
             return true;
         }
 
-        private void EnsureSorted()
+        /// <summary>
+        /// Forces the list to sort its contents.
+        /// </summary>
+        public void EnsureSorted()
         {
             if (this.isSorted)
             {
                 return;
             }
 
-            this._list.Sort(KeyComparer.Instance);
+            this._list.Sort(KeyValueComparer.Instance);
             this.isSorted = true;
         }
 
@@ -254,13 +283,29 @@ namespace ConvenientCollections
             return ~low;
         }
 
-        private class KeyComparer : IComparer<KeyValuePair<TKey, TValue>>
+        private class KeyValueComparer : IComparer<KeyValuePair<TKey, TValue>>
         {
-            public static readonly KeyComparer Instance = new KeyComparer();
+            public static readonly KeyValueComparer Instance = new KeyValueComparer();
+
+            private readonly IComparer<TKey> customComparer;
+
+            private KeyValueComparer()
+            {
+            }
+
+            public KeyValueComparer(IComparer<TKey> customKeyComparer)
+            {
+                this.customComparer = customKeyComparer;
+            }
 
             public int Compare(KeyValuePair<TKey, TValue> x, KeyValuePair<TKey, TValue> y)
             {
-                return x.Key.CompareTo(y.Key);
+                if (this.customComparer == null)
+                {
+                    return x.Key.CompareTo(y.Key);
+                }
+
+                return this.customComparer.Compare(x.Key, y.Key);
             }
         }
     }
