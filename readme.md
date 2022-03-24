@@ -1,5 +1,9 @@
 # Convenient Collections
 
+## Nuget Package
+
+Find it here:  [BazookaMusic.ConvenientCollections](https://www.nuget.org/packages/BazookaMusic.ConvenientCollections/1.0.0)
+
 ## What is this repo for?
 
 It will contain a number of useful collections with either better performance than System counterparts or different performance trade-offs.
