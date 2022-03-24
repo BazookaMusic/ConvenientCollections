@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-
-namespace ConvenientCollections
+﻿namespace BazookaMusic.ConvenientCollections
 {
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+
     /// <summary>
     /// A sorted list which only sorts its contents on read, 
     /// supporting O(1) insertion and O(logn) search during regular use.
@@ -40,7 +40,7 @@ namespace ConvenientCollections
         /// Creates an instance of the <see cref="LazySortedList{TKey, TValue}"/> object.
         /// </summary>
         /// <param name="comparer">The comparer to use.</param>
-        public LazySortedList(int capacity = 4, IComparer<TKey> comparer)
+        public LazySortedList(int capacity, IComparer<TKey> comparer)
         {
             this._list = new List<KeyValuePair<TKey, TValue>>(capacity);
             this.comparer = comparer != null ? new KeyValueComparer(comparer) : KeyValueComparer.Instance;
@@ -246,12 +246,6 @@ namespace ConvenientCollections
         private int FindItemIndex(TKey key)
         {
             return this.BinarySearch(key);
-        }
-
-        private int FindItemIndex(KeyValuePair<TKey, TValue> item)
-        {
-            int index = this.BinarySearch(item.Key);
-            return index;
         }
 
         private int BinarySearch(TKey key)

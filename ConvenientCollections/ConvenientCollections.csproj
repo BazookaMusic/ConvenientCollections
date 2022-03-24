@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+	<Title>BazookaMusic.ConvenientCollections</Title>
+    <Authors>Sotiris Dragonas</Authors>
+    <Company />
+    <Product />
+    <Description>A number of useful collections with either better performance than System counterparts or different performance trade-offs.</Description>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageProjectUrl>https://github.com/BazookaMusic/ConvenientCollections</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/BazookaMusic/ConvenientCollections</RepositoryUrl>
+    <RepositoryType>public</RepositoryType>
+    <PackageTags>collections, SortedList, performance</PackageTags>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AssemblyName>BazookaMusic.ConvenientCollections</AssemblyName>
+    <RootNamespace>BazookaMusic.ConvenientCollections</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE.md">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
+
+</Project>
